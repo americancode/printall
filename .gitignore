@@ -12,13 +12,14 @@
 *.war
 *.ear
 
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
 
 ### Gradle ###
 .gradle
-/build/
+build
 bin
 
 # Ignore Gradle GUI config
