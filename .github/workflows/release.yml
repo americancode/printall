@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - 'v[0-9]*.[0-9]*.[0-9]*'
 
 permissions:
   contents: write
@@ -32,6 +32,14 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v7
+      - name: Validate release tag
+        shell: bash
+        run: |
+          if [[ ! "${GITHUB_REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$ ]]; then
+            echo "Unsupported release tag: ${GITHUB_REF_NAME}"
+            echo "Expected vMAJOR.MINOR.PATCH or vMAJOR.MINOR.PATCH-rcN"
+            exit 1
+          fi
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
