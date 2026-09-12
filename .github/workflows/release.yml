@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v*'
 
 permissions:
   contents: write
@@ -23,7 +23,7 @@ jobs:
           - target: aarch64-unknown-linux-gnu
             runner: ubuntu-24.04-arm
           - target: x86_64-apple-darwin
-            runner: macos-13
+            runner: macos-15-intel
           - target: aarch64-apple-darwin
             runner: macos-14
           - target: x86_64-pc-windows-msvc
@@ -89,9 +89,14 @@ jobs:
               --repo "${{ github.repository }}" \
               --clobber
           else
+            release_flags=()
+            if [[ "${{ github.ref_name }}" == *-rc* ]]; then
+              release_flags+=(--prerelease)
+            fi
             gh release create "${{ github.ref_name }}" dist/* \
               --repo "${{ github.repository }}" \
               --verify-tag \
               --title "PrintAll ${{ github.ref_name }}" \
-              --generate-notes
+              --generate-notes \
+              "${release_flags[@]}"
           fi
